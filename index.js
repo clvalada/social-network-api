@@ -2,10 +2,13 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config(); // Load variables from .env file
+
 const app = express();
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/your-database', { useNewUrlParser: true, useUnifiedTopology: true });
+// Connect to MongoDB using the environment variable
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Define your routes here
 
