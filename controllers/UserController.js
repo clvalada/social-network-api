@@ -1,3 +1,5 @@
+// UserController.js
+
 const User = require('../models/User');
 
 const UserController = {
@@ -14,3 +16,4 @@ const UserController = {
 };
 
 module.exports = UserController;
+
