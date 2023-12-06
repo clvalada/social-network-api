@@ -7,8 +7,11 @@ dotenv.config(); // Load variables from .env file
 
 const app = express();
 
+// Log the MongoDB URI
+console.log('MongoDB URI:', process.env.MONGODB_URI);
+
 // Connect to MongoDB using the environment variable
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.MONGODB_URI);
 
 // Define your routes here
 
