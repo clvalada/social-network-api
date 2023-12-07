@@ -1,3 +1,5 @@
+// ThoughtController.js
+
 const Thought = require('../models/Thought');
 
 const ThoughtController = {
