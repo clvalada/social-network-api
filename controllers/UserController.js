@@ -83,7 +83,7 @@ const UserController = {
     }
   },
 
-  // Add more controller methods as needed
+
 };
 
 module.exports = UserController;

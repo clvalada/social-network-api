@@ -5,7 +5,6 @@ const thoughtSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // Add other thought properties as needed
 });
 
 const Thought = mongoose.model('Thought', thoughtSchema);

@@ -10,7 +10,6 @@ const ThoughtController = {
     }
   },
 
-  // Add other controller methods for handling specific thought operations
 };
 
 module.exports = ThoughtController;
