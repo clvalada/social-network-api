@@ -1,6 +1,9 @@
-// ThoughtController.js
+// controllers/ThoughtController.js
 
+const mongoose = require('mongoose');
 const Thought = require('../models/Thought');
+const User = require('../models/User');
+const Reaction = require('../models/Reaction');
 
 const ThoughtController = {
   getAllThoughts: async (req, res) => {
@@ -38,6 +41,11 @@ const ThoughtController = {
 
       const newThought = new Thought({ thoughtText, username });
       const savedThought = await newThought.save();
+
+      await User.findByIdAndUpdate(
+        savedThought.username,
+        { $push: { thoughts: savedThought._id } }
+      );
 
       res.status(201).json(savedThought);
     } catch (error) {
@@ -77,7 +85,61 @@ const ThoughtController = {
         return res.status(404).json({ error: 'Thought not found' });
       }
 
+      await User.findByIdAndUpdate(
+        deletedThought.username,
+        { $pull: { thoughts: thoughtId } }
+      );
+
       res.json({ message: 'Thought deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  createReaction: async (req, res) => {
+    try {
+      const thoughtId = req.params.thoughtId;
+      const { reactionBody, username } = req.body;
+
+      if (!reactionBody || !username) {
+        return res.status(400).json({ error: 'Reaction body and username are required' });
+      }
+
+      const newReaction = new Reaction({ reactionBody, username });
+      const savedReaction = await newReaction.save();
+
+      await Thought.findByIdAndUpdate(
+        thoughtId,
+        { $push: { reactions: savedReaction._id } }
+      );
+
+      res.status(201).json(savedReaction);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  removeReaction: async (req, res) => {
+    try {
+      const thoughtId = req.params.thoughtId;
+      const reactionId = req.params.reactionId;
+
+      const isValidReactionId = mongoose.Types.ObjectId.isValid(reactionId);
+      if (!isValidReactionId) {
+        return res.status(400).json({ error: 'Invalid reactionId' });
+      }
+
+      const thought = await Thought.findByIdAndUpdate(
+        thoughtId,
+        { $pull: { reactions: reactionId } },
+        { new: true }
+      );
+
+      if (!thought) {
+        return res.status(404).json({ error: 'Thought not found' });
+      }
+
+      res.json(thought);
     } catch (error) {
       res.status(500).json({ error: 'Internal Server Error' });
     }
