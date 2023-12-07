@@ -12,6 +12,61 @@ const UserController = {
     }
   },
 
+  addFriend: async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const friendId = req.params.friendId;
+
+      // Check if friendId is valid
+      const isValidFriendId = mongoose.Types.ObjectId.isValid(friendId);
+      if (!isValidFriendId) {
+        return res.status(400).json({ error: 'Invalid friendId' });
+      }
+
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { friends: friendId } },
+        { new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+  removeFriend: async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const friendId = req.params.friendId;
+
+      // Check if friendId is valid
+      const isValidFriendId = mongoose.Types.ObjectId.isValid(friendId);
+      if (!isValidFriendId) {
+        return res.status(400).json({ error: 'Invalid friendId' });
+      }
+
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $pull: { friends: friendId } },
+        { new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
+
   getUserById: async (req, res) => {
     try {
       const userId = req.params.userId;
